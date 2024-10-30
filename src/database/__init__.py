@@ -1936,28 +1936,27 @@ class pythonboat_database_handler:
 			if shop_exists:
 				break
 
+		color = self.discord_blue_rgb_code
+		embed = discord.Embed(
+			description=f"{shop_name.title()}",
+			color = color)
+		
 		if not shop_exists:
 			return "error", "Shop does not exist!"
-		catalog_final, max_items, current, finished = [], 10, 0, False
-		catalog_report = f"__{shop_name.title()} Available:__\n```\n"
 		if item_check == "default_list":
 			for i in range(len(items)):
-				current += 1
+				print("checking items now...")
 				try:
-					print("Shop is: " + shop_name)
+					print("IN TRY: Shop is: " + shop_name)
 					if items[i]["shop"] == shop_name:
-						catalog_report += f"Item {i}: {items[i]['display_name']}\n price: {self.currency_symbol} {items[i]['price']}; short name <{items[i]['name']}>\n\n"
-						if current >= max_items:
-							catalog_report += "\n```"
-							catalog_final.append(catalog_report)
-							catalog_report = "```"
-							current = 0
+						print("it's for this shop")
+						embed.add_field(name=f"{self.currency_symbol}{items[i]["price"]} - {items[i]["display_name"]}", value=f"{items[i]["description"]}", inline=False)
+						embed.add_field(name=f"", value=f"", inline=True)
+						
 				except:
 					await channel.send("compatbility error, please contact an admin.")
 					return "success", "success"
 
-			catalog_report += "\n```\n*For details about an item: use* `shop <item short name>`"
-			catalog_final.append(catalog_report)
 
 		else:
 			check, img_prob = 0, False
@@ -1980,9 +1979,9 @@ class pythonboat_database_handler:
 
 
 				try:
-					embed = discord.Embed(title=f"catalog: {items[item_index]['display_name']}", color=color)
+					embed = discord.Embed(title=f"{items[item_index]['display_name']}", color=color)
 				except:
-					embed = discord.Embed(title=f"catalog: item {items[item_index]['name']}", color=color)
+					embed = discord.Embed(title=f"{items[item_index]['name']}", color=color)
 
 				req_roles = ""
 
@@ -2075,12 +2074,12 @@ class pythonboat_database_handler:
 					await channel.send(catalog_report)
 					return "success", "success"
 
-				# embed.set_author(name=username, icon_url=user_pfp)
 				embed.set_footer(text="WARNING: URL for img was not found. Could be deprecated\nPlease look into the json file manually or contact an admin.") if img_prob else embed.set_footer(text="Info: always use the short name for commands.")
 				sent_embed = await channel.send(embed=embed)
 				return "success", "success"
-		for i in range(len(catalog_final)):
-			await channel.send(catalog_final[i])
+		
+		embed.set_author(name=username, icon_url=user_pfp)
+		await channel.send(embed=embed)
 
 		# overwrite, end
 		# not needed

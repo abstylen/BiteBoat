@@ -254,6 +254,58 @@
             "reply_message": "Congrats on buying the item.",
             "expiration_date": "2298-08-14 14:48:13.790512",
             "item_img_url": "EMPTY"
+        },
+        {
+            "name": "taco",
+            "display_name": "Taco",
+            "price": 3,
+            "description": "It\u2019s a taco \ud83c\udf2e",
+            "duration": 99999,
+            "amount_in_stock": 5,
+            "max_amount": 1,
+            "required_roles": [
+                ""
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "\ud83c\udf2e\ud83c\udf2e\ud83c\udf2e",
+            "shop": "cats",
+            "expiration_date": "2298-08-14 17:27:07.301605",
+            "item_img_url": "EMPTY"
+        },
+        {
+            "name": "cat",
+            "display_name": "\ud83d\udc08\u200d\u2b1b  Black Cat",
+            "price": 10,
+            "description": "its a cat",
+            "duration": 100,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "reply_message": "Congrats on buying the item.",
+            "shop": "cats",
+            "expiration_date": "2025-02-07 17:31:36.387732",
+            "item_img_url": "EMPTY"
         }
     ],
     "shops": [

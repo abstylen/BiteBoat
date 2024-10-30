@@ -1665,7 +1665,7 @@ async def on_message(message):
 			elif checkpoints == 13:
 				#check 13 - which shop should it be added to
 				
-				shop_name = user_input
+				shop_name = user_input.lower()
 				first_embed.add_field(name="Shop ", value=f"{shop_name}", inline=False)
 				first_embed.set_footer(text="Type cancel to quit or skip to skip this option")
 				next_info = "`14`: What image should the item have? Enter complete url !\nIf none, just reply `skip`."
