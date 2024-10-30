@@ -43,7 +43,7 @@ with open('config.json', 'r') as cfg:
   config = json.load(cfg) 
   
 # init discord stuff and json handling
-BOT_PREFIX = ("+")  # tupple in case we'd need multiple
+BOT_PREFIX = ("+", "!")  # tupple in case we'd need multiple
 token = config["token"]
 # emojis
 emoji_worked = "✅"
