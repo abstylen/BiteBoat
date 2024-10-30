@@ -266,6 +266,8 @@ class pythonboat_database_handler:
 		# print("FINISHED writing")
 		return "success", "success"
 
+
+	
 	#
 	# SLUT
 	#
@@ -1397,6 +1399,33 @@ class pythonboat_database_handler:
 		self.overwrite_json(json_content)
 
 		return "success", "success"
+	
+	#
+	# REMOVE ITEM FROM STORE (STAYS IN USER INVENTORY)
+	#
+
+	async def remove_item_from_store(self, item_name):
+		# load json
+		json_file = open(self.pathToJson, "r")
+		json_content = json.load(json_file)
+
+		json_items = json_content["items"]
+		item_found = item_index = 0
+		for i in range(len(json_items)):
+			if json_items[i]["name"] == item_name:
+				item_found = 1
+				item_index = i
+		if not item_found:
+			return "error", "❌ Item not found."
+
+		# delete from the "items" section
+		json_items.pop(item_index)
+
+		# overwrite, end
+		json_content["items"] = json_items
+		self.overwrite_json(json_content)
+
+		return "success", "success"
 
 	#
 	# REMOVE ITEM FROM SPECIFIC USER's INVENTORY
@@ -1802,7 +1831,7 @@ class pythonboat_database_handler:
 
 			# number of pages which will be needed :
 			# we have 10 items per page
-			items_per_page = 5  # change to 10 after
+			items_per_page = 10 
 
 			# our selection !
 			index_start = (page_number - 1) * items_per_page
@@ -1840,7 +1869,7 @@ class pythonboat_database_handler:
 				# btw i use "ideographic space" [　] for tab
 				# inventory_checkup += f"[{current_index}]　Item: {item_display_name}\n　　short name: {json_items[ii]['name']}\n　　amount: `{items_selection[i][1]}`\n\n"
 				embed.add_field(name=f"[{current_index}]　Item: {item_display_name}",
-								value=f"short name: `{json_items[ii]['name']}`　"
+								value=f"short name: `{items_selection[i][0]}`　"
 									  f"amount: `{items_selection[i][1]}`", inline=False)
 				current_index += 1
 
@@ -1869,7 +1898,7 @@ class pythonboat_database_handler:
 
 		items = json_content["items"]
 		catalog_final, max_items, current, finished = [], 10, 0, False
-		catalog_report = "__Items catalog:__\n```\n"
+		catalog_report = "__Shop Items:__\n```\n"
 		if item_check == "default_list":
 			for i in range(len(items)):
 				current += 1
@@ -1877,7 +1906,6 @@ class pythonboat_database_handler:
 					# print(current, max_items)
 					catalog_report += f"Item {i}: {items[i]['display_name']}\n      price: {self.currency_symbol} {items[i]['price']};　short name <{items[i]['name']}>\n\n"
 					if current >= max_items:
-						# catalog_report += "\n```\n*For details about an item: use* `catalog <item short name>`"
 						catalog_report += "\n```"
 						catalog_final.append(catalog_report)
 						catalog_report = "```"
@@ -1886,10 +1914,7 @@ class pythonboat_database_handler:
 					await channel.send("compatbility error, please contact an admin.")
 					return "success", "success"
 
-			#if current != 0:
-			#	catalog_report += "\n*For details about an item: use* `catalog <item short name>`"
-			#else:
-			catalog_report += "\n```\n*For details about an item: use* `catalog <item short name>`"
+			catalog_report += "\n```\n*For details about an item: use* `shop <item short name>`"
 			catalog_final.append(catalog_report)
 
 		else:
@@ -2291,21 +2316,66 @@ class pythonboat_database_handler:
 		json_content["userdata"][user_index] = json_user_content
 		json_content["income_roles"] = json_income_roles
 
+		color = self.discord_blue_rgb_code
+		embed = discord.Embed(color=color)
+	
 		if no_money:
-			await channel.send("You have no income roles!")
+			embed.add_field(name=f"**You have no income roles!**", value=f"", inline=False)
 		else:
 			if int(income_total) != 0:
-				await channel.send(f"You have received your income ({self.currency_symbol} {'{:,}'.format(int(income_total))}) from a total of {received_instances} different roles!", silent=True)
+				embed.add_field(name=f"**You have received your income**", value=f"{self.currency_symbol} {'{:,}'.format(int(income_total))} from a total of {received_instances} different roles!", inline=False)
 			else:
-				await channel.send(f"`You already collected! Reset in: {hours_remaining} hours.`", silent=True)
-
+				embed.add_field(name=f"**You already collected!**", value=f"Collect again in {hours_remaining} hours.", inline=False)
+		await channel.send(embed=embed)
 		# overwrite, end
 		self.overwrite_json(json_content)
 
 		return "success", "success"
 
 
+	#
+	# ADD MONEY BY ROLE
+	#
 
+	async def add_money_role(self, user, channel, username, user_pfp, server_object, income_role, amount_added):
+		# load json
+		json_file = open(self.pathToJson, "r")
+		json_content = json.load(json_file)
+
+		json_income_roles = json_content["income_roles"]
+
+		# pretty straight forward i think.
+		# first, we go into each role object
+		# then we check in everyones roles if they have the role
+
+		role = discord.utils.get(server_object.roles, id=int(income_role))
+		for member in role.members:
+			try:
+				# also to create user in case he isnt registered yet
+				user_index, new_data = self.find_index_in_db(json_content["userdata"], member.id)
+
+				json_user_content = json_content["userdata"][user_index]
+				json_user_content["bank"] += int(amount_added)
+				# overwrite
+				json_content["userdata"][user_index] = json_user_content
+
+			except:
+				pass
+
+		# inform user
+		color = self.discord_success_rgb_code
+		embed = discord.Embed(
+			description=f"✅ You have added {self.currency_symbol} {'{:,}'.format(int(amount_added))} to a total of {'{:,}'.format(int(len(role.members)))} users with that role !",
+			color=color)
+		embed.set_author(name=username, icon_url=user_pfp)
+		await channel.send(embed=embed)
+
+		# overwrite, end
+		json_content["income_roles"] = json_income_roles
+		self.overwrite_json(json_content)
+
+		return "success", "success"
+	
 	#
 	# REMOVE MONEY BY ROLE
 	#
@@ -2352,6 +2422,17 @@ class pythonboat_database_handler:
 
 		return "success", "success"
 	
+	# 
+	# DICE ROLLER
+	#
+
+	async def roll(self, user, channel):
+		color = self.discord_blue_rgb_code
+		embed = discord.Embed(color=color)
+		embed.add_field(name=f"**You Rolled:**", value = f"**{random.randint(1, 20)}**", inline=False)
+		await channel.send(embed=embed)
+		return "success", "success"
+
 	#
 	# ECONOMY STATS
 	#
