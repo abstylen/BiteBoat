@@ -2,7 +2,7 @@
     "userdata": [
         {
             "user_id": 611784823123607573,
-            "cash": 100112673.0,
+            "cash": 100112672.0,
             "bank": 0.0,
             "items": [
                 [
@@ -56,7 +56,7 @@
             "items": [
                 [
                     "soul",
-                    0
+                    1
                 ],
                 [
                     "test1",
@@ -82,12 +82,16 @@
         },
         {
             "user_id": 246076988274638849,
-            "cash": 157,
+            "cash": 156,
             "bank": 0,
             "items": [
                 [
                     "test1",
                     11
+                ],
+                [
+                    "soul",
+                    1
                 ]
             ],
             "used_items": "none",
@@ -200,23 +204,56 @@
     ],
     "items": [
         {
-            "name": "test"
+            "name": "soul",
+            "display_name": "bear's soul v2",
+            "price": 1,
+            "description": "yes",
+            "duration": 5,
+            "amount_in_stock": 8,
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "shop": "mutations",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2024-11-04 13:13:34.474556",
+            "item_img_url": "EMPTY"
         },
         {
-            "name": "mutations"
-        },
-        {
-            "name": "traits"
-        },
-        {
-            "name": "seasonal"
-        },
-        {
-            "name": "collectables"
-        },
-        {
-            "name": "cats",
-            "description": "meow"
+            "name": "test",
+            "display_name": "test",
+            "price": 1,
+            "description": "test",
+            "duration": 99999,
+            "amount_in_stock": "unlimited",
+            "max_amount": "unlimited",
+            "required_roles": [
+                "none"
+            ],
+            "given_roles": [
+                "none"
+            ],
+            "removed_roles": [
+                "none"
+            ],
+            "excluded_roles": [
+                "none"
+            ],
+            "maximum_balance": "none",
+            "shop": "tests",
+            "reply_message": "Congrats on buying the item.",
+            "expiration_date": "2298-08-14 14:48:13.790512",
+            "item_img_url": "EMPTY"
         }
     ],
     "shops": [

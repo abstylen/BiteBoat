@@ -1326,7 +1326,7 @@ class pythonboat_database_handler:
 		})
 
 		# overwrite, end
-		json_content["items"] = json_shops
+		json_content["shops"] = json_shops
 		self.overwrite_json(json_content)
 
 		return "success", "success"
@@ -1931,7 +1931,7 @@ class pythonboat_database_handler:
 		shops = json_content["shops"]
 		shop_exists = 0
 		for i in range(len(shops)):
-			print(shops[i]["name"])
+			print("Shop is" + shops[i]["name"])
 			shop_exists = (shops[i]["name"] == shop_name)
 			if shop_exists:
 				break
@@ -1944,9 +1944,9 @@ class pythonboat_database_handler:
 			for i in range(len(items)):
 				current += 1
 				try:
-					# print(current, max_items)
+					print("Shop is: " + shop_name)
 					if items[i]["shop"] == shop_name:
-						catalog_report += f"Item {i}: {items[i]['display_name']}\n      price: {self.currency_symbol} {items[i]['price']};　short name <{items[i]['name']}>\n\n"
+						catalog_report += f"Item {i}: {items[i]['display_name']}\n price: {self.currency_symbol} {items[i]['price']}; short name <{items[i]['name']}>\n\n"
 						if current >= max_items:
 							catalog_report += "\n```"
 							catalog_final.append(catalog_report)
@@ -2102,7 +2102,7 @@ class pythonboat_database_handler:
 		shop_exists = 0
 		
 		catalog_final, max_items, current, finished = [], 10, 0, False
-		catalog_report = f"```__Shops Available:__\n```\n"
+		catalog_report = f"**Shops Available:\n**\n"
 		
 		for i in range(len(shops)):
 			current += 1
