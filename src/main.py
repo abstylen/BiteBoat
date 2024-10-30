@@ -1221,6 +1221,87 @@ async def on_message(message):
 		"""
 			SPECIAL COMMANDS
 		"""
+	# ---------------------------
+	#   SHOP CREATION / Create shop
+	# ---------------------------
+
+	elif command in ["createshop", "create-shop", "new-shop", "shop-create"]:
+		if not staff_request:
+			color = discord_error_rgb_code
+			embed = discord.Embed(description=f"🔒 Requires botmaster role", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			await channel.send(embed=embed)
+			return
+
+		currently_creating_shop = True
+		checkpoints = 0
+		last_report = ""
+		color = discord.Color.from_rgb(3, 169, 244)
+		# send a first input which we will then edit
+		info_text = ":zero: What should the new shop be called?\nThis name should be unique and no more than 200 characters.\nIt can contain symbols and multiple words."
+		first_embed = discord.Embed(title="Item Info", description="Display Name\n.", color=color)
+		first_embed.set_footer(text="Type cancel to quit")
+		await channel.send(info_text, embed=first_embed)
+
+		while currently_creating_shop:
+			# get input first
+			user_input = await get_user_input(message, default_spell=False)
+			print("at checkpoint ", checkpoints, "\ninput is ", user_input)
+			# check if user wants cancel
+			if user_input == "cancel":
+				await channel.send(f"{emoji_error}  Cancelled command.")
+				return
+
+			if checkpoints == 0:
+				# check 0: display name
+				if len(user_input) > 200:
+					await channel.send(f"{emoji_error} The maximum length for a shop name is 200 characters. Please try again.")
+					continue
+				elif len(user_input) < 3:
+					await channel.send(f"{emoji_error}  The minimum length for a shop name is 3 characters. Please try again.")
+					continue
+				# good input
+				shop_display_name = user_input
+				first_embed = discord.Embed(title="Shop Info", color=color)
+				first_embed.add_field(name="Name", value=f"{shop_display_name}")
+				first_embed.set_footer(text="Type cancel to quit")
+				next_info = ":one: Write a short description for this shop."
+				last_report = await channel.send(next_info, embed=first_embed)
+				checkpoints += 1
+			
+				trial = 0
+
+			elif checkpoints == 1:
+				# check 1: description
+				if len(user_input) > 200:
+					await channel.send(f"{emoji_error} The maximum length for a Shops description is 200 characters. Please try again.")
+					continue
+				if user_input.lower() == "skip":
+					description = "none"
+				else:
+					description = user_input
+				first_embed.add_field(name="Description", value=f"{description}", inline=False)
+				first_embed.set_footer(text="Type cancel to quit or skip to skip this option")
+			
+				next_info = f"{emoji_worked} Shop created successfully!"
+				await last_report.edit(content=next_info, embed=first_embed)
+				checkpoints = -1
+				# finished with the checks
+				currently_creating_shop = False
+		
+		# handler
+
+		try:
+			status, create_item_return = await db_handler.create_new_shop(shop_display_name, description)
+			if status == "error":
+				color = discord_error_rgb_code
+				embed = discord.Embed(description=f"{create_item_return}", color=color)
+				embed.set_author(name=username, icon_url=user_pfp)
+				await channel.send(embed=embed)
+				return
+		except Exception as e:
+			print(e)
+			await send_error(channel)
 
 	# ---------------------------
 	#   ITEM CREATION / Create item
@@ -1578,12 +1659,20 @@ async def on_message(message):
 				reply_message = user_input
 				first_embed.add_field(name="Reply message", value=f"{reply_message}", inline=False)
 				first_embed.set_footer(text="Type cancel to quit or skip to skip this option")
-				next_info = "`13`: What image should the item have? Enter complete url !\nIf none, just reply `skip`."
+				next_info = "`13`: What shop should the item be added to?"
 				await last_report.edit(content=next_info, embed=first_embed)
 				checkpoints += 1
-
 			elif checkpoints == 13:
-				# check 13: item img
+				#check 13 - which shop should it be added to
+				
+				shop_name = user_input
+				first_embed.add_field(name="Shop ", value=f"{shop_name}", inline=False)
+				first_embed.set_footer(text="Type cancel to quit or skip to skip this option")
+				next_info = "`14`: What image should the item have? Enter complete url !\nIf none, just reply `skip`."
+				await last_report.edit(content=next_info, embed=first_embed)
+				checkpoints += 1
+			elif checkpoints == 14:
+				# check 14: item img
 				if user_input.lower() == "skip":
 					user_input = f"EMPTY"
 					item_img_url = user_input
@@ -1608,7 +1697,7 @@ async def on_message(message):
 		# handler
 
 		try:
-			status, create_item_return = await db_handler.create_new_item(item_display_name, item_name, cost, description, duration, stock, max_amount, roles_id_required, roles_id_to_give, roles_id_to_remove, max_bal, reply_message, item_img_url, roles_id_excluded)
+			status, create_item_return = await db_handler.create_new_item(item_display_name, item_name, cost, description, duration, stock, max_amount, roles_id_required, roles_id_to_give, roles_id_to_remove, max_bal, reply_message, shop_name, item_img_url, roles_id_excluded)
 			if status == "error":
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{create_item_return}", color=color)
@@ -1618,6 +1707,7 @@ async def on_message(message):
 		except Exception as e:
 			print(e)
 			await send_error(channel)
+
 
 	# ---------------------------
 	#   DELETE ITEM - REMOVE ITEM
@@ -2243,14 +2333,42 @@ async def on_message(message):
 
 	elif command in ["shop", "store", "catalog", "items", "item-list", "list-items"]:
 
-		if "none" in param[1]:  # we need item name
+		if "none" in param[1]:
+			color = discord_error_rgb_code
+			embed = discord.Embed(description=f"{"You must specify a shop!"}", color=color)
+			embed.set_author(name=username, icon_url=user_pfp)
+			await channel.send(embed=embed)
+			return
+		else:
+			shop_name = param[1]
+		if "none" in param[2]:  # we need item name
 			item_check = "default_list"
 		else:
-			item_check = param[1]
+			item_check = param[2]
 
 		# handler
 		try:
-			status, catalog_return = await db_handler.catalog(user, channel, username, user_pfp, item_check, server)
+			status, catalog_return = await db_handler.catalog(user, channel, username, user_pfp, shop_name, item_check, server)
+			if status == "error":
+				color = discord_error_rgb_code
+				embed = discord.Embed(description=f"{catalog_return}", color=color)
+				embed.set_author(name=username, icon_url=user_pfp)
+				await channel.send(embed=embed)
+				return
+		except Exception as e:
+			print(e)
+			await send_error(channel)
+		return
+
+# ---------------------------
+	#   SHOP CATALOG
+	# ---------------------------
+
+	elif command in ["shops-list", "shoplist", "shops"]:
+
+		# handler
+		try:
+			status, catalog_return = await db_handler.shop_catalog(user, channel, username, user_pfp, server)
 			if status == "error":
 				color = discord_error_rgb_code
 				embed = discord.Embed(description=f"{catalog_return}", color=color)

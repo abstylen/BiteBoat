@@ -1303,18 +1303,48 @@ class pythonboat_database_handler:
 	"""
 	ITEM HANDLING
 	"""
+#
+	# CREATE NEW SHOP / create shop
+	#
+
+	async def create_new_shop(self, shop_name, description):
+		# load json
+		json_file = open(self.pathToJson, "r")
+		json_content = json.load(json_file)
+
+		json_shops = json_content["shops"]
+
+
+		for i in range(len(json_shops)):
+			if json_shops[i]["name"] == shop_name:
+				return "error", "❌ Shop with such name already exists."
+
+	
+		json_shops.append({
+			"name": shop_name,
+			"description": description
+		})
+
+		# overwrite, end
+		json_content["items"] = json_shops
+		self.overwrite_json(json_content)
+
+		return "success", "success"
+
 
 	#
 	# CREATE NEW ITEM / create item
 	#
 
 	async def create_new_item(self, item_display_name, item_name, cost, description, duration, stock, max_amount, roles_id_required, roles_id_to_give,
-							  roles_id_to_remove, max_bal, reply_message, item_img_url, roles_id_excluded):
+							  roles_id_to_remove, max_bal, reply_message, shop_name, item_img_url, roles_id_excluded):
 		# load json
 		json_file = open(self.pathToJson, "r")
 		json_content = json.load(json_file)
 
 		json_items = json_content["items"]
+		json_shops = json_content["shops"]
+
 
 		for i in range(len(json_items)):
 			if json_items[i]["name"] == item_name:
@@ -1341,6 +1371,7 @@ class pythonboat_database_handler:
 			"excluded_roles": roles_id_excluded,
 			"maximum_balance": max_bal,
 			"reply_message": reply_message,
+			"shop": shop_name,
 			"expiration_date": str(expiration_date),
 			"item_img_url": item_img_url
 		})
@@ -1891,25 +1922,36 @@ class pythonboat_database_handler:
 	# CATALOG
 	#
 
-	async def catalog(self, user, channel, username, user_pfp, item_check, server_object):
+	async def catalog(self, user, channel, username, user_pfp, shop_name, item_check, server_object):
 		# load json
 		json_file = open(self.pathToJson, "r")
 		json_content = json.load(json_file)
 
 		items = json_content["items"]
+		shops = json_content["shops"]
+		shop_exists = 0
+		for i in range(len(shops)):
+			print(shops[i]["name"])
+			shop_exists = (shops[i]["name"] == shop_name)
+			if shop_exists:
+				break
+
+		if not shop_exists:
+			return "error", "Shop does not exist!"
 		catalog_final, max_items, current, finished = [], 10, 0, False
-		catalog_report = "__Shop Items:__\n```\n"
+		catalog_report = f"__{shop_name.title()} Available:__\n```\n"
 		if item_check == "default_list":
 			for i in range(len(items)):
 				current += 1
 				try:
 					# print(current, max_items)
-					catalog_report += f"Item {i}: {items[i]['display_name']}\n      price: {self.currency_symbol} {items[i]['price']};　short name <{items[i]['name']}>\n\n"
-					if current >= max_items:
-						catalog_report += "\n```"
-						catalog_final.append(catalog_report)
-						catalog_report = "```"
-						current = 0
+					if items[i]["shop"] == shop_name:
+						catalog_report += f"Item {i}: {items[i]['display_name']}\n      price: {self.currency_symbol} {items[i]['price']};　short name <{items[i]['name']}>\n\n"
+						if current >= max_items:
+							catalog_report += "\n```"
+							catalog_final.append(catalog_report)
+							catalog_report = "```"
+							current = 0
 				except:
 					await channel.send("compatbility error, please contact an admin.")
 					return "success", "success"
@@ -2042,6 +2084,45 @@ class pythonboat_database_handler:
 
 		# overwrite, end
 		# not needed
+
+		return "success", "success"
+
+
+	#
+	# SHOP CATALOG
+	#
+
+	async def shop_catalog(self, user, channel, username, user_pfp, server_object):
+		# load json
+		json_file = open(self.pathToJson, "r")
+		json_content = json.load(json_file)
+
+		
+		shops = json_content["shops"]
+		shop_exists = 0
+		
+		catalog_final, max_items, current, finished = [], 10, 0, False
+		catalog_report = f"```__Shops Available:__\n```\n"
+		
+		for i in range(len(shops)):
+			current += 1
+			try:
+				catalog_report += f"Shop {i}: {shops[i]['name']}\n\n"
+				if current >= max_items:
+					catalog_report += "\n```"
+					catalog_final.append(catalog_report)
+					catalog_report = "```"
+					current = 0
+			except:
+				await channel.send("compatbility error, please contact an admin.")
+				return "success", "success"
+
+		catalog_final.append(catalog_report)
+
+		
+		for i in range(len(catalog_final)):
+			await channel.send(catalog_final[i])
+
 
 		return "success", "success"
 

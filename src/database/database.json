@@ -2,7 +2,7 @@
     "userdata": [
         {
             "user_id": 611784823123607573,
-            "cash": 100112613.0,
+            "cash": 100112612.0,
             "bank": 0.0,
             "items": [
                 [
@@ -16,6 +16,10 @@
                 [
                     "test",
                     200
+                ],
+                [
+                    "trait1",
+                    1
                 ]
             ],
             "used_items": [
@@ -196,54 +200,44 @@
     ],
     "items": [
         {
-            "name": "soul",
-            "display_name": "bear's soul v2",
-            "price": 1,
-            "description": "yes",
-            "duration": 5,
-            "amount_in_stock": 0,
-            "max_amount": "unlimited",
-            "required_roles": [
-                "none"
-            ],
-            "given_roles": [
-                "none"
-            ],
-            "removed_roles": [
-                "none"
-            ],
-            "excluded_roles": [
-                "none"
-            ],
-            "maximum_balance": "none",
-            "reply_message": "Congrats on buying the item.",
-            "expiration_date": "2024-11-04 13:13:34.474556",
-            "item_img_url": "EMPTY"
+            "name": "test"
         },
         {
-            "name": "test",
-            "display_name": "test",
-            "price": 1,
-            "description": "test",
-            "duration": 99999,
-            "amount_in_stock": "unlimited",
-            "max_amount": "unlimited",
-            "required_roles": [
-                "none"
-            ],
-            "given_roles": [
-                "none"
-            ],
-            "removed_roles": [
-                "none"
-            ],
-            "excluded_roles": [
-                "none"
-            ],
-            "maximum_balance": "none",
-            "reply_message": "Congrats on buying the item.",
-            "expiration_date": "2298-08-14 14:48:13.790512",
-            "item_img_url": "EMPTY"
+            "name": "mutations"
+        },
+        {
+            "name": "traits"
+        },
+        {
+            "name": "seasonal"
+        },
+        {
+            "name": "collectables"
+        },
+        {
+            "name": "cats",
+            "description": "meow"
+        }
+    ],
+    "shops": [
+        {
+            "name": "test"
+        },
+        {
+            "name": "mutations"
+        },
+        {
+            "name": "traits"
+        },
+        {
+            "name": "seasonal"
+        },
+        {
+            "name": "collectables"
+        },
+        {
+            "name": "cats",
+            "description": "meow"
         }
     ],
     "income_roles": [
