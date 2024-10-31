@@ -1565,7 +1565,7 @@ class pythonboat_database_handler:
 						return "error", f"❌ User does not seem to have all required roles."
 		except Exception as e:
 			print("1", e)
-			return "error", f"❌ Unexpected error."
+			return "error", f"❌ Unexpected error in req roles check."
 		
 		# 2. check excluded roles - meaning roles with which you CANT buy
 		try:
@@ -1577,7 +1577,7 @@ class pythonboat_database_handler:
 						return "error", f"❌ User possesses excluded role (id: {excluded_roles[i]})."
 		except Exception as e:
 			print("2", e)
-			return "error", f"❌ Unexpected error."
+			return "error", f"❌ Unexpected error in excluded role check."
 
 		### BEFORE update, "check rem roles" and "check give roles" was located here. it seems that
 		### the intended usage i had back then was to do that stuff once the item is bought.
@@ -1620,7 +1620,7 @@ class pythonboat_database_handler:
 				user_item_amount = 0
 		
 		if max_amount != "unlimited":
-			if int(amount) >= int(max_amount) or int(user_item_amount + amount) >= int(max_amount) + 1:
+			if int(amount) > int(max_amount) or int(user_item_amount + amount) >= int(max_amount) + 1:
 				available_to_buy = int(max_amount) - int(user_item_amount)
 				return "error", f"❌ You have too many items or would own too many.\nYou can buy **{'{:,}'.format(available_to_buy)}** {item_name}(s)"
 		
@@ -1656,7 +1656,7 @@ class pythonboat_database_handler:
 					except:
 						continue
 		except Exception as e:
-			return "error", f"❌ Unexpected error."
+			return "error", f"❌ Unexpected error removing roles."
 
 		# 9. check give roles
 		try:
@@ -1672,7 +1672,7 @@ class pythonboat_database_handler:
 
 		except Exception as e:
 			print("3", e)
-			return "error", f"❌ Unexpected error."
+			return "error", f"❌ Unexpected error giving roles."
 		color = self.discord_blue_rgb_code
 		embed = discord.Embed(
 			description=f"You have bought {amount} {item_display_name} and paid {str(self.currency_symbol)} **{'{:,}'.format(int(sum_price))}**",

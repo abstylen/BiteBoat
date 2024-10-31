@@ -1481,7 +1481,7 @@ async def on_message(message):
 
 					roles_clean_one = await get_role_id_multiple(user_input)
 
-					required_roles = ""
+					required_roles = ["none"]
 					for role_id in roles_clean_one:
 						try:
 							role = discord.utils.get(server.roles, id=int(role_id))

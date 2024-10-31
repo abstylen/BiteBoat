@@ -2,7 +2,7 @@
     "userdata": [
         {
             "user_id": 611784823123607573,
-            "cash": 100112672.0,
+            "cash": 100112659.0,
             "bank": 0.0,
             "items": [
                 [
@@ -19,6 +19,14 @@
                 ],
                 [
                     "trait1",
+                    1
+                ],
+                [
+                    "cat",
+                    1
+                ],
+                [
+                    "taco",
                     1
                 ]
             ],
@@ -261,10 +269,10 @@
             "price": 3,
             "description": "It\u2019s a taco \ud83c\udf2e",
             "duration": 99999,
-            "amount_in_stock": 5,
+            "amount_in_stock": 4,
             "max_amount": 1,
             "required_roles": [
-                ""
+                "none"
             ],
             "given_roles": [
                 "none"
