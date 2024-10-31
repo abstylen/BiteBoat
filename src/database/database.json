@@ -2,12 +2,12 @@
     "userdata": [
         {
             "user_id": 611784823123607573,
-            "cash": 100112659.0,
-            "bank": 0.0,
+            "cash": 0.0,
+            "bank": 100112756.0,
             "items": [
                 [
                     "test1",
-                    93
+                    92
                 ],
                 [
                     "soul",
@@ -33,11 +33,11 @@
             "used_items": [
                 [
                     "test1",
-                    2
+                    3
                 ]
             ],
             "last_slut": "2024-10-30 11:23:26.742931",
-            "last_work": "2024-10-30 17:05:52.194626",
+            "last_work": "2024-10-30 23:43:00.133838",
             "last_crime": "2024-10-30 11:23:19.769624",
             "last_rob": "2024-10-30 11:23:36.326743"
         },
@@ -207,7 +207,7 @@
             "name": "currency_symbol",
             "symbol_emoji": "my_currency_emoji_clear_name_only",
             "income_reset": "true",
-            "global_collect": "2024-10-30 17:06:05.972615"
+            "global_collect": "2024-10-30 23:44:09.561029"
         }
     ],
     "items": [

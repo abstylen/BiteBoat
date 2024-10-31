@@ -125,15 +125,16 @@ async def send_error(channel):
 # ~~~ set custom status ~~~
 @client.event
 async def on_ready():
-	activity = discord.Game(name=f"My default prefix is <{BOT_PREFIX}>")
+	activity = discord.Game(name=f"Welcome to HellBite! <{BOT_PREFIX}>")
 	await client.change_presence(status=discord.Status.online, activity=activity)
-	# log_channel = 807057317396217947 # in your server, select a channel you want log info to be sent to
+	log_channel = 1301390682723848233
+	#  # in your server, select a channel you want log info to be sent to
 									# rightclick and copy id. put the id here. it should look like this : 807057317396217947
 	"""
 	NEED LOG CHANNEL ID
 	"""
-	# channel = client.get_channel(log_channel)
-	# await channel.send("running")
+	log_channel = client.get_channel(log_channel)
+	await log_channel.send("running")
 
 
 	# check json, putting it here because has to be in a async function
